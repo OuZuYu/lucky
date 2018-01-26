@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>抽奖</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		
+		li {
+			list-style: none;
+		}
+		
+		body, html {
+			width: 100%;
+			height: 100%;
+		}
+		
+		.wrapper {
+			position: relative;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+			background: url(bg.gif) no-repeat;
+			background-size: 100% 100%;
+		}
+		
+		.congratulation {
+			position: absolute;
+			left: 50%;
+			top: -100%;
+			margin-left: -138px;
+			width: 277px;
+			height: 340px;
+			background: url(hb.gif) no-repeat;
+			border-radius: 16px;
+			text-align: center;
+			transition: all 1s;
+		}
+		
+		.congratulation .blessing {
+			display: inline-block;
+			color: #fff;
+			margin-top: 20%;
+		}
+		
+		.congratulation .lucky-dog {
+			margin: 60% auto 0;
+			color: #fff;
+			font-size: 28px;
+		}
+
+		.congratulation.show {
+			top: 30%;
+		}
+
+		.content {
+			display: flex;
+			width: 70%;
+			height: 48%;
+			min-height: 456px;
+			background: rgba(0, 0, 0, .7);
+			border-radius: 6px;
+		}
+		
+		.draw-wrapper {
+			flex: 2;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		.draw-content {
+			width: 30%;
+			height: 30%;
+		}
+
+		#luckyDog {
+			width: 100%;
+			height: 60%;
+			min-height: 80px;
+			line-height: 80px;
+			text-align: center;
+			color: #fff;
+			font-size: 28px;
+			border: 2px solid #F29807;
+			border-radius: 6px;
+			box-sizing: border-box;
+		}
+
+		.draw-content .btns {
+			display: flex;
+			justify-content: space-between;
+			height: 30%;
+			margin-top: 10%;
+		}
+
+		.draw-content .btns .btn {
+			width: 40%;
+			height: 100%;
+			min-height: 40px;
+			color: #fff;
+			background: #F29807;
+			border: 0;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+		
+
+		.draw-content .btns .btn:hover {
+			background: #fcb842;
+		}
+
+		.lucky-dogs-list-wrapper {
+			flex: 1;
+			padding: 20px;
+		}
+		
+		.lucky-dogs-list-content {
+			width: 100%;
+			height: 100%;
+			background: rgba(255, 255, 255, .3);
+			border-radius: 6px;
+		}
+		
+		.lucky-dogs-list-content .title {
+			position: relative;
+			height: 50px;
+			line-height: 50px;
+			font-size: 28px;
+			text-align: center;
+			color: #F29807;
+		}
+		
+		.lucky-dogs-list-content .title::before {
+			position: absolute;
+			content: '';
+			top: 100%;
+			left: 0;
+			width: 100%;
+			height: 2px;
+			background: -webkit-linear-gradient(left,rgba(248,215,59,0),#f0d03a,rgba(248,215,59,0));
+		}
+
+		#luckyDogsList {
+			height: 85%;
+			overflow-y: auto;
+		}
+
+		#luckyDogsList li {
+			padding: 10px 0;
+			text-align: center;
+			font-size: 20px;
+			color: #fff;
+		}
+		.reset-peples {
+			position: fixed;
+			left: 0;
+			top: 0;
+			font-size: 12px;
+			opacity: .2;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+<div class="wrapper">
+	<div class="reset-peples">名单数据重置</div>
+	<div class="congratulation">
+		<span class="blessing">恭喜发财，大吉大利</span>
+		<div class="lucky-dog"></div>
+	</div>
+	<div class="content">
+		<div class="draw-wrapper">
+			<div class="draw-content">
+				<div id="luckyDog">幸运儿</div>
+				<div class="btns">
+					<button id="start" class="btn">开始</button>
+					<button id="stop" class="btn">停止</button>
+				</div>
+			</div>
+		</div>
+		<div class="lucky-dogs-list-wrapper">
+			<div class="lucky-dogs-list-content">
+				<h1 class="title">Lucky Dog</h1>
+				<ul id="luckyDogsList">
+				</ul>
+			</div>	
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="http://cdn.webfont.youziku.com/wwwroot/js/wf/youziku.api.min.js"></script>
+<script type="text/javascript">
+   $youziku.load(".title, #luckyDog, #luckyDogsList, .lucky-dog", "fcc1219dba7c486f9cec36cc6787656c", "jdzhonyuanjian");
+   /*$youziku.load("#id1,.class1,h1", "fcc1219dba7c486f9cec36cc6787656c", "jdzhonyuanjian");*/
+   /*．．．*/
+   $youziku.draw();
+</script>
+<script src="peples.js"></script>
+<script src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<script>
+$(function() {
+	if (localStorage.luckyDogs) {
+		let luckyDogs = JSON.parse(localStorage.luckyDogs);
+		if (luckyDogs.length) {
+			for (let i of luckyDogs) {
+				$('#luckyDogsList').prepend("<li>" + i + "</li>");
+			}
+		}
+	}
+
+	let peples = localStorage.peples ? JSON.parse(localStorage.peples) : employeesData;
+	localStorage.peples = JSON.stringify(peples);
+	console.log(peples)
+	let time = null,
+		index = 0,
+		luckyDogs = localStorage.luckyDogs ? JSON.parse(localStorage.luckyDogs) : [];
+
+	$('#start').click(function () {
+		if (time || !peples.length) return;
+		time = setInterval(function () {
+			$('#luckyDog').html(scroll());
+		}, 50)
+	});
+
+	$('#stop').click(function () {
+		if(!time) return;
+		clearInterval(time);
+		time = null;
+		luckyDogs.push(peples[index]);
+		localStorage.luckyDogs = JSON.stringify(luckyDogs);
+		$('#luckyDogsList').prepend('<li>'+luckyDogs[luckyDogs.length-1]+'</li>');
+		$('.lucky-dog').html(luckyDogs[luckyDogs.length-1]);
+		$('.congratulation').addClass('show');
+		setTimeout(function(){$('.congratulation').removeClass('show');}, 2000);
+		peples.splice(index, 1);
+		localStorage.peples = JSON.stringify(peples);
+	});
+
+	function scroll () {
+		index = Math.floor((Math.random()*peples.length));
+		return peples[index];
+	}
+
+	$('.reset-peples').click(function () {
+		peples = employeesData;
+		localStorage.luckyDogs = "[]";
+		localStorage.peples = JSON.stringify(peples);
+	});
+})
+</script>
+</body>
+</html>
