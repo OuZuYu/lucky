@@ -30,6 +30,7 @@
 		}
 		
 		.congratulation {
+			z-index: 9999;
 			position: absolute;
 			left: 50%;
 			top: -100%;
@@ -59,14 +60,49 @@
 		}
 
 		.content {
+			position: relative;
 			display: flex;
 			width: 70%;
 			height: 48%;
 			min-height: 456px;
 			background: rgba(0, 0, 0, .7);
-			border-radius: 6px;
+			border-radius: 0 0 6px 6px;
 		}
 		
+		.content .awards-wrapper {
+			position: absolute;
+			top: -50px;
+			width: 100%;
+		}
+
+		.awards {
+			display: flex;
+		}
+
+		.awards li {
+			flex: 1;
+			height: 50px;
+			line-height: 50px;
+			color: #959595;
+			text-align: center;
+			background: rgba(0, 0, 0, .7);
+			border-bottom: 1px solid #fcb842;
+			cursor: pointer;
+		}
+
+		.awards li:first-child {
+			border-radius: 6px 0 0 0;
+		}
+
+		.awards li:last-child {
+			border-radius: 0 6px 0 0;
+		}
+
+		.awards li.active {
+			background: #fcb842;
+			color: #fff;
+		}
+
 		.draw-wrapper {
 			flex: 2;
 			display: flex;
@@ -75,18 +111,18 @@
 		}
 		
 		.draw-content {
-			width: 30%;
-			height: 30%;
+			width: 40%;
+			height: 40%;
 		}
 
 		#luckyDog {
 			width: 100%;
 			height: 60%;
-			min-height: 80px;
-			line-height: 80px;
+			min-height: 109px;
+			line-height: 109px;
 			text-align: center;
 			color: #fff;
-			font-size: 28px;
+			font-size: 38px;
 			border: 2px solid #F29807;
 			border-radius: 6px;
 			box-sizing: border-box;
@@ -115,6 +151,10 @@
 			background: #fcb842;
 		}
 
+		#stop {
+			display: none;
+		}
+		
 		.lucky-dogs-list-wrapper {
 			flex: 1;
 			padding: 20px;
@@ -157,6 +197,7 @@
 			font-size: 20px;
 			color: #fff;
 		}
+
 		.reset-peples {
 			position: fixed;
 			left: 0;
@@ -165,28 +206,70 @@
 			opacity: .2;
 			cursor: pointer;
 		}
+
+		/* .big-title {
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100%;
+		}
+		
+		.big-title .line {
+			width: 2px;
+			height: 100px;
+			margin: 0 auto;
+			background: rgba(240,0,0, .5);
+		}
+		
+		.big-title .text {
+			width: 20%;
+			height: 50px;
+			margin: 0 auto;
+			line-height: 50px;
+			text-align: center;
+			background: rgba(240,0,0, .5);
+			color: #fff;
+			border-radius: 6px;
+		} */
 	</style>
 </head>
 <body>
 <div class="wrapper">
 	<div class="reset-peples">名单数据重置</div>
+	<!-- 红包 -->
 	<div class="congratulation">
 		<span class="blessing">恭喜发财，大吉大利</span>
 		<div class="lucky-dog"></div>
 	</div>
+	<!-- <div class="big-title">
+		<div class="line"></div>
+		<div class="text">正在抽取五等奖</div>
+	</div> -->
 	<div class="content">
+		<!-- 奖项 -->
+		<div class="awards-wrapper">
+			<ul class="awards">
+				<li class="active" id="five">五等奖</li>
+				<li id="three">三等奖</li>
+				<li id="two">二等奖</li>
+				<li id="one">一等奖</li>
+			</ul>
+		</div>
+		<!-- 抽奖框 -->
 		<div class="draw-wrapper">
 			<div class="draw-content">
 				<div id="luckyDog">幸运儿</div>
 				<div class="btns">
-					<button id="start" class="btn">开始</button>
-					<button id="stop" class="btn">停止</button>
+					<button id="start" class="btn">开始滚动</button>
+					<button id="stop" class="btn">停止滚动</button>
+					<button id="extract" class="btn">抽奖</button>
 				</div>
 			</div>
 		</div>
+		<!-- 中奖名单 -->
 		<div class="lucky-dogs-list-wrapper">
 			<div class="lucky-dogs-list-content">
-				<h1 class="title">Lucky Dog</h1>
+				<h1 class="title" id="winTitle">五等奖</h1>
 				<ul id="luckyDogsList">
 				</ul>
 			</div>	
@@ -196,16 +279,15 @@
 <script type="text/javascript" src="http://cdn.webfont.youziku.com/wwwroot/js/wf/youziku.api.min.js"></script>
 <script type="text/javascript">
    $youziku.load(".title, #luckyDog, #luckyDogsList, .lucky-dog", "fcc1219dba7c486f9cec36cc6787656c", "jdzhonyuanjian");
-   /*$youziku.load("#id1,.class1,h1", "fcc1219dba7c486f9cec36cc6787656c", "jdzhonyuanjian");*/
-   /*．．．*/
    $youziku.draw();
 </script>
 <script src="peples.js"></script>
 <script src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
 <script>
 $(function() {
-	if (localStorage.luckyDogs) {
-		let luckyDogs = JSON.parse(localStorage.luckyDogs);
+	//--------------初始化数据-----------------
+	if (localStorage.five) {
+		let luckyDogs = JSON.parse(localStorage.five);
 		if (luckyDogs.length) {
 			for (let i of luckyDogs) {
 				$('#luckyDogsList').prepend("<li>" + i + "</li>");
@@ -213,30 +295,57 @@ $(function() {
 		}
 	}
 
+	let  awards = {
+		five: {val: localStorage.five ? JSON.parse(localStorage.five) : [], count: 5},
+		three: {val: localStorage.three ? JSON.parse(localStorage.three) : [], count: 3},
+		two: {val: localStorage.two ? JSON.parse(localStorage.two) : [], count: 2},
+		one: {val: localStorage.one ? JSON.parse(localStorage.one) : [], count: 1}
+	};
 	let peples = localStorage.peples ? JSON.parse(localStorage.peples) : employeesData;
 	localStorage.peples = JSON.stringify(peples);
-	console.log(peples)
+	console.log(peples);
+	//-------------------------------------------
+
 	let time = null,
-		index = 0,
-		luckyDogs = localStorage.luckyDogs ? JSON.parse(localStorage.luckyDogs) : [];
+		index = 0;
 
 	$('#start').click(function () {
 		if (time || !peples.length) return;
+		let level = $('.awards .active').attr('id'); //正在抽几等奖
+		if (awards[level].val.length === awards[level].count) {
+			alert(`(＞﹏＜)！超出人数啦！该奖项只能抽取${awards[level].count}人！-_-|||`);
+			return;
+		}
+		$(this).hide().next().show();
 		time = setInterval(function () {
 			$('#luckyDog').html(scroll());
-		}, 50)
+		}, 30)
 	});
 
 	$('#stop').click(function () {
 		if(!time) return;
 		clearInterval(time);
 		time = null;
-		luckyDogs.push(peples[index]);
-		localStorage.luckyDogs = JSON.stringify(luckyDogs);
-		$('#luckyDogsList').prepend('<li>'+luckyDogs[luckyDogs.length-1]+'</li>');
-		$('.lucky-dog').html(luckyDogs[luckyDogs.length-1]);
-		$('.congratulation').addClass('show');
-		setTimeout(function(){$('.congratulation').removeClass('show');}, 2000);
+		$(this).hide().prev().show();
+		$('#luckyDog').html('幸运儿');
+	});
+
+	$('#extract').click(function () {
+		if(!time) return;
+		clearInterval(time);
+		$('#start').show().next().hide();
+		time = null;
+		let level = $('.awards .active').attr('id'); //正在抽几等奖
+		// 存到对应localstorage
+		awards[level].val.push($('#luckyDog').html());
+		localStorage[level] = JSON.stringify(awards[level].val);
+
+		// html渲染
+		$('#luckyDogsList').prepend('<li>'+$('#luckyDog').html()+'</li>'); //中奖人员列表
+		$('.lucky-dog').html($('#luckyDog').html()); //红包
+		$('.congratulation').addClass('show'); // 红包掉下来
+		setTimeout(function(){$('.congratulation').removeClass('show');}, 2000); //红包收上去
+		//砍掉中奖人！！！
 		peples.splice(index, 1);
 		localStorage.peples = JSON.stringify(peples);
 	});
@@ -246,10 +355,27 @@ $(function() {
 		return peples[index];
 	}
 
+	$('.awards li').click(function () {
+			let level = $(this).attr('id');
+			$(this).addClass('active')
+			.siblings().removeClass('active');
+			$('#luckyDogsList').empty();
+			if (awards[level].val.length) {
+				for (let i of awards[level].val) {
+					$('#luckyDogsList').prepend("<li>" + i + "</li>");
+				}
+			}
+			$('#winTitle').html($(this).html());			
+			$('#luckyDog').html('幸运儿');
+	});
+
+	// 清除数据
 	$('.reset-peples').click(function () {
-		peples = employeesData;
-		localStorage.luckyDogs = "[]";
-		localStorage.peples = JSON.stringify(peples);
+        let r = confirm('确定清除数据，重新抽奖吗？')
+        if (r) {
+			localStorage.clear();
+			window.location.reload();
+        }
 	});
 })
 </script>
