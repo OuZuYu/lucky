@@ -196,16 +196,21 @@
 			text-align: center;
 			font-size: 20px;
 			color: #fff;
+			cursor: pointer;
 		}
 
-		.reset-peples {
+		#luckyDogsList li:hover {
+			color: #FF5064;
+		}
+
+		/* .reset-peples {
 			position: fixed;
 			left: 0;
 			top: 0;
 			font-size: 12px;
 			opacity: .2;
 			cursor: pointer;
-		}
+		} */
 
 		/* .big-title {
 			position: fixed;
@@ -235,7 +240,8 @@
 </head>
 <body>
 <div class="wrapper">
-	<div class="reset-peples">名单数据重置</div>
+	<!-- <div class="reset-peples">名单数据重置</div> -->
+	<!-- <button id="t">测试按钮</button> -->
 	<!-- 红包 -->
 	<div class="congratulation">
 		<span class="blessing">恭喜发财，大吉大利</span>
@@ -285,6 +291,12 @@
 <script src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
 <script>
 $(function() {
+	/*$('#t').click(function () {
+		console.log(222)
+		$.post('localhost:3000/save', {level:'test', peple:111}, function(r) {
+			console.log(111)
+		})
+	});*/
 	//--------------初始化数据-----------------
 	if (localStorage.five) {
 		let luckyDogs = JSON.parse(localStorage.five);
@@ -294,6 +306,8 @@ $(function() {
 			}
 		}
 	}
+
+	let deleted = localStorage.deleted ? JSON.parse(localStorage.deleted) : {};
 
 	let  awards = {
 		five: {val: localStorage.five ? JSON.parse(localStorage.five) : [], count: 5},
@@ -356,25 +370,37 @@ $(function() {
 	}
 
 	$('.awards li').click(function () {
-			let level = $(this).attr('id');
-			$(this).addClass('active')
-			.siblings().removeClass('active');
-			$('#luckyDogsList').empty();
-			if (awards[level].val.length) {
-				for (let i of awards[level].val) {
-					$('#luckyDogsList').prepend("<li>" + i + "</li>");
-				}
+		let level = $(this).attr('id');
+		$(this).addClass('active')
+		.siblings().removeClass('active');
+		$('#luckyDogsList').empty();
+		if (awards[level].val.length) {
+			for (let i of awards[level].val) {
+				$('#luckyDogsList').prepend("<li>" + i + "</li>");
 			}
-			$('#winTitle').html($(this).html());			
-			$('#luckyDog').html('幸运儿');
+		}
+		$('#winTitle').html($(this).html());			
+		$('#luckyDog').html('幸运儿');
 	});
 
-	// 清除数据
-	$('.reset-peples').click(function () {
-        let r = confirm('确定清除数据，重新抽奖吗？')
+	$('#luckyDogsList li').click(function (e) {
+		let delVal = e.target.innerHTML;
+		if (!delVal.length) return;
+        let r = confirm(`确定删除${delVal}吗？`);
         if (r) {
-			localStorage.clear();
-			window.location.reload();
+        	let level = $('.awards .active').attr('id');
+	       	if(!deleted[level]) {
+	       		deleted[level] = delVal + ',';
+	       	} else {
+	       		deleted[level] += delVal + ',';
+	       	}
+	       	localStorage.deleted = JSON.stringify(deleted);
+        	$(e.target).remove(); // 删除框中的
+        	let i = awards[level].val.find(val => {
+        		val = delVal
+        	});
+        	awards[level].val.splice(i, 1);
+        	localStorage[level] = JSON.stringify(awards[level].val);
         }
 	});
 })

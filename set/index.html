@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>抽奖数据设置</title>
+	<style>
+		#reset {
+			height: 100px;
+			width: 100px;
+			margin-bottom: 50px;
+			background: #f99;
+			color: #fff;
+			font-size: 20px;
+			cursor: pointer;
+			border: 0;
+		}
+		#reset:hover {
+			background: #f80;
+		}
+	</style>
+</head>
+<body>
+<button id="reset">重置所有</button>
+<div class="set">
+	<p>五等奖删除过的人：<span id="delFive"></span></p>
+	<p>三等奖删除过的人：<span id="delThree"></span></p>
+	<p>二等奖删除过的人：<span id="delTwo"></span></p>
+	<p>一等奖删除过的人：<span id="delOne"></span></p>
+	<br>
+	恢复删除过的人: 填写名称,逗号','分隔，确定!
+	<p>5:<input type="text" id="five"></p>
+	<p>3:<input type="text" id="three"></p>
+	<p>2:<input type="text" id="two"></p>
+	<p>1:<input type="text" id="one"></p>
+	<button id="ok">确定</button>
+</div>
+
+<script src="../peples.js"></script>
+<script src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<script>
+$(function () {
+	if (localStorage.deleted) {
+		let del = JSON.parse(localStorage.deleted);
+		console.log(del)
+		del.five && $('#delFive').html(del.five.slice(0, del.five.length-1));
+		del.three && $('#delThree').html(del.three.slice(0, del.three.length-1));
+		del.two && $('#delTwo').html(del.two.slice(0, del.two.length-1));
+		del.one && $('#delOne').html(del.one.slice(0, del.one.length-1));
+	}
+
+
+	let  awards = {
+		five: {val: localStorage.five ? JSON.parse(localStorage.five) : [], count: 5},
+		three: {val: localStorage.three ? JSON.parse(localStorage.three) : [], count: 3},
+		two: {val: localStorage.two ? JSON.parse(localStorage.two) : [], count: 2},
+		one: {val: localStorage.one ? JSON.parse(localStorage.one) : [], count: 1}
+	};
+	let peples = localStorage.peples ? JSON.parse(localStorage.peples) : employeesData;
+	localStorage.peples = JSON.stringify(peples);
+	console.log(peples);
+	
+	console.log(localStorage)
+	// 清除数据
+	$('#reset').click(function () {
+        let r = confirm('确定清除数据，重新开始抽奖吗？')
+        if (r) {
+			localStorage.clear();
+			window.location.reload();
+        }
+	});
+
+	$('#ok').click(function(event) {
+		if ($('#five').attr('value')) {
+			let l = JSON.parse(localStorage.five);
+			let d = JSON.parse(localStorage.deleted);
+			let arr = d.five.split(',');
+			
+			for (let i = 0; i < $('#five').attr('value').split(',').length; i++) {
+				let index = arr.findIndex(val => val === $('#five').attr('value').split(',')[i]);
+				arr.splice(index, 1);
+				if (l.length < 5) {
+					l.push($('#five').attr('value').split(',')[i]);
+				} else {
+					alert('失败，超出人数');
+					return;
+				}
+			}
+				
+			let str = arr.join(',');
+			d.five = str;
+			localStorage.deleted = JSON.stringify(d);
+
+			localStorage.five=JSON.stringify(l);
+		}
+		if ($('#three').attr('value')) {
+			let l = JSON.parse(localStorage.three);
+			let d = JSON.parse(localStorage.deleted);
+			let arr = d.three.split(',');
+			
+			for (let i = 0; i < $('#three').attr('value').split(',').length; i++) {
+				let index = arr.findIndex(val => val === $('#three').attr('value').split(',')[i]);
+				arr.splice(index, 1);
+				if (l.length < 3) {
+					l.push($('#three').attr('value').split(',')[i]);
+				} else {
+					alert('失败，超出人数');
+					return;
+				}
+			}
+				
+			let str = arr.join(',');
+			d.three = str;
+			localStorage.deleted = JSON.stringify(d);
+
+			localStorage.three=JSON.stringify(l);
+		}
+		if ($('#two').attr('value')) {
+			let l = JSON.parse(localStorage.two);
+			let d = JSON.parse(localStorage.deleted);
+			let arr = d.two.split(',');
+			
+			for (let i = 0; i < $('#two').attr('value').split(',').length; i++) {
+				let index = arr.findIndex(val => val === $('#two').attr('value').split(',')[i]);
+				arr.splice(index, 1);
+				if (l.length < 2) {
+					l.push($('#two').attr('value').split(',')[i]);
+				} else {
+					alert('失败，超出人数');
+					return;
+				}
+			}
+				
+			let str = arr.join(',');
+			d.two = str;
+			localStorage.deleted = JSON.stringify(d);
+
+			localStorage.two=JSON.stringify(l);
+		}
+		if ($('#one').attr('value')) {
+			let l = JSON.parse(localStorage.one);
+			let d = JSON.parse(localStorage.deleted);
+			let arr = d.one.split(',');
+			
+			for (let i = 0; i < $('#one').attr('value').split(',').length; i++) {
+				let index = arr.findIndex(val => val === $('#one').attr('value').split(',')[i]);
+				arr.splice(index, 1);
+				if (l.length < 1) {
+					l.push($('#one').attr('value').split(',')[i]);
+				} else {
+					alert('失败，超出人数');
+					return;
+				}
+			}
+				
+			let str = arr.join(',');
+			d.one = str;
+			localStorage.deleted = JSON.stringify(d);
+
+			localStorage.one=JSON.stringify(l);
+		}
+		let r = confirm(`成功，请到抽奖页刷新`);
+	});
+});
+</script>
+</body>
+</html>
