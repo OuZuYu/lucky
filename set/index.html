@@ -22,50 +22,38 @@
 <body>
 <button id="reset">重置所有</button>
 <div class="set">
-	<p>五等奖删除过的人：<span id="delFive"></span></p>
-	<p>三等奖删除过的人：<span id="delThree"></span></p>
-	<p>二等奖删除过的人：<span id="delTwo"></span></p>
-	<p>一等奖删除过的人：<span id="delOne"></span></p>
+	<p>三等奖删除过的人：<span id="delFive"></span></p>
+	<p>二等奖删除过的人：<span id="delThree"></span></p>
+	<p>一等奖删除过的人：<span id="delTwo"></span></p>
+	<p>特等奖删除过的人：<span id="delOne"></span></p>
 	<br>
 	恢复删除过的人: 填写名称,逗号','分隔，确定!
-	<p>5:<input type="text" id="five"></p>
-	<p>3:<input type="text" id="three"></p>
-	<p>2:<input type="text" id="two"></p>
-	<p>1:<input type="text" id="one"></p>
+	<p>3:<input type="text" id="five"></p>
+	<p>2:<input type="text" id="three"></p>
+	<p>1:<input type="text" id="two"></p>
+	<p>特:<input type="text" id="one"></p>
 	<button id="ok">确定</button>
 </div>
 
-<script src="../peples.js"></script>
-<script src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="../peoples.js"></script>
+<script src="../jquery.min.js"></script>
 <script>
 $(function () {
 	if (localStorage.deleted) {
 		let del = JSON.parse(localStorage.deleted);
-		console.log(del)
 		del.five && $('#delFive').html(del.five.slice(0, del.five.length-1));
 		del.three && $('#delThree').html(del.three.slice(0, del.three.length-1));
 		del.two && $('#delTwo').html(del.two.slice(0, del.two.length-1));
 		del.one && $('#delOne').html(del.one.slice(0, del.one.length-1));
 	}
 
-
-	let  awards = {
-		five: {val: localStorage.five ? JSON.parse(localStorage.five) : [], count: 5},
-		three: {val: localStorage.three ? JSON.parse(localStorage.three) : [], count: 3},
-		two: {val: localStorage.two ? JSON.parse(localStorage.two) : [], count: 2},
-		one: {val: localStorage.one ? JSON.parse(localStorage.one) : [], count: 1}
-	};
-	let peples = localStorage.peples ? JSON.parse(localStorage.peples) : employeesData;
-	localStorage.peples = JSON.stringify(peples);
-	console.log(peples);
-	
-	console.log(localStorage)
 	// 清除数据
 	$('#reset').click(function () {
         let r = confirm('确定清除数据，重新开始抽奖吗？')
         if (r) {
 			localStorage.clear();
 			window.location.reload();
+			alert('成功，请到抽奖页刷新');
         }
 	});
 
@@ -159,6 +147,7 @@ $(function () {
 			localStorage.one=JSON.stringify(l);
 		}
 		let r = confirm(`成功，请到抽奖页刷新`);
+		location.reload();
 	});
 });
 </script>

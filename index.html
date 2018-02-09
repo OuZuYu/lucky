@@ -255,10 +255,10 @@
 		<!-- 奖项 -->
 		<div class="awards-wrapper">
 			<ul class="awards">
-				<li class="active" id="five">五等奖</li>
-				<li id="three">三等奖</li>
-				<li id="two">二等奖</li>
-				<li id="one">一等奖</li>
+				<li class="active" id="five">三等奖</li>
+				<li id="three">二等奖</li>
+				<li id="two">一等奖</li>
+				<li id="one">特等奖</li>
 			</ul>
 		</div>
 		<!-- 抽奖框 -->
@@ -275,7 +275,7 @@
 		<!-- 中奖名单 -->
 		<div class="lucky-dogs-list-wrapper">
 			<div class="lucky-dogs-list-content">
-				<h1 class="title" id="winTitle">五等奖</h1>
+				<h1 class="title" id="winTitle">三等奖</h1>
 				<ul id="luckyDogsList">
 				</ul>
 			</div>	
@@ -287,8 +287,8 @@
    $youziku.load(".title, #luckyDog, #luckyDogsList, .lucky-dog", "fcc1219dba7c486f9cec36cc6787656c", "jdzhonyuanjian");
    $youziku.draw();
 </script>
-<script src="peples.js"></script>
-<script src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="peoples.js"></script>
+<script src="jquery.min.js"></script>
 <script>
 $(function() {
 	/*$('#t').click(function () {
@@ -383,25 +383,26 @@ $(function() {
 		$('#luckyDog').html('幸运儿');
 	});
 
-	$('#luckyDogsList li').click(function (e) {
+	$('#luckyDogsList').on('click', function (e) {
 		let delVal = e.target.innerHTML;
 		if (!delVal.length) return;
-        let r = confirm(`确定删除${delVal}吗？`);
-        if (r) {
-        	let level = $('.awards .active').attr('id');
-	       	if(!deleted[level]) {
-	       		deleted[level] = delVal + ',';
-	       	} else {
-	       		deleted[level] += delVal + ',';
-	       	}
-	       	localStorage.deleted = JSON.stringify(deleted);
-        	$(e.target).remove(); // 删除框中的
-        	let i = awards[level].val.find(val => {
-        		val = delVal
-        	});
-        	awards[level].val.splice(i, 1);
-        	localStorage[level] = JSON.stringify(awards[level].val);
-        }
+		if (e.target.tagName !== 'LI') return;
+	        let r = confirm(`确定删除${delVal}吗？`);
+	        if (r) {
+	        	let level = $('.awards .active').attr('id');
+		       	if(!deleted[level]) {
+		       		deleted[level] = delVal + ',';
+		       	} else {
+		       		deleted[level] += delVal + ',';
+		       	}
+		       	localStorage.deleted = JSON.stringify(deleted);
+	        	$(e.target).remove(); // 删除框中的
+	        	let i = awards[level].val.find(val => {
+	        		val = delVal
+	        	});
+	        	awards[level].val.splice(i, 1);
+	        	localStorage[level] = JSON.stringify(awards[level].val);
+	        }
 	});
 })
 </script>
